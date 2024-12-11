@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Drowsiness Detection</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .container h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #007BFF;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="file"] {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #555;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Driver Drowsiness Detection</h1>
+    </header>
+
+    <div class="container">
+        <h2>Stay Safe on the Road</h2>
+        <p>Upload a photo to detect drowsiness. Our system uses advanced AI to ensure safety for drivers.</p>
+
+        <form id="uploadForm">
+            <label for="image"><strong>Select an Image:</strong></label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+            <button type="submit">Detect Drowsiness</button>
+        </form>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <footer>
+        &copy; 2024 Driver Drowsiness Detection System. All rights reserved.
+    </footer>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('image');
+            const file = fileInput.files[0];
+            if (!file) {
+                resultDiv.textContent = "Please select an image.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            resultDiv.textContent = "Processing your image...";
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error("Server error. Please try again later.");
+                }
+
+                const data = await response.json();
+                if (data.error) {
+                    resultDiv.textContent = `Error: ${data.error}`;
+                } else {
+                    resultDiv.textContent = `Result: ${data.class}, Confidence: ${(data.confidence * 100).toFixed(2)}%`;
+                }
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
