@@ -96,7 +96,7 @@ Include a video or image showing the system in action.
 ---
 
 ## Contributors
-- [Your Name](https://github.com/your-profile)
+- [PRAMOTH KUMAR M](https://github.com/pramothkumarm)
 
 ---
 
